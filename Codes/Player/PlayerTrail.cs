@@ -4,15 +4,12 @@ using UnityEngine;
 
 public class PlayerTrail : MonoBehaviour
 {
-    /// 포트폴리오가 아닌 개인사용 목적으로 만들어진 스크립트 입니다.
-    /// 실력부족으로 인해 최적화에 문제가 있을 수 있습니다.
-
     public bool Active = false;
-    [Header("실루엣")]
+    [Header("占실루엣")]
     public int SlideEA = 10;
     public float SlideTime = 0.1f;
 
-    [Header("잔상 RGB 범위")]
+    [Header("占쌤삼옙 RGB 占쏙옙占쏙옙")]
     public float RedMin = 0;
     public float RedMax = 255;
     public float GreenMin = 0;
@@ -29,7 +26,6 @@ public class PlayerTrail : MonoBehaviour
 
     private void Awake()
     {
-        // Component로 SpriteRender를 가지지 않으면 작동하지 않도록.
         if (!GetComponent<SpriteRenderer>())
         {
             Debug.Log("Not Find SpriteRender. from Move_Slide for " + gameObject.name);
@@ -42,16 +38,15 @@ public class PlayerTrail : MonoBehaviour
         if (!Bank)
         {
             Bank = new GameObject(gameObject.name + " SilhouetteListList Bank");
-            // 하이라이키가 너무 난잡해진다. Bank라는 오브젝트를 만들어 그 하위 개체로 넣는다.
+            
             if (SlideNow > SilhouetteList.Count)
             {
                 for (int i = SilhouetteList.Count; SlideNow > i; i++)
                 {
-                    GameObject SpriteCopy = new GameObject(transform.gameObject.name + " SilhouetteList " + i); // 빈 게임오브젝트를 만들어서
+                    GameObject SpriteCopy = new GameObject(transform.gameObject.name + " SilhouetteList " + i);
                     SpriteCopy.transform.parent = Bank.transform;
-                    SpriteCopy.AddComponent<SpriteRenderer>(); // 스프라이트렌더를 넣고
-                    SilhouetteList.Insert(i, SpriteCopy); // 한번에 관리하기 쉽도록 리스트에 넣는다.
-                    //오브젝트와 스프라이트 렌더를 생성하는 과정에서 성능저하가 있을 가능성이 있음.
+                    SpriteCopy.AddComponent<SpriteRenderer>();
+                    SilhouetteList.Insert(i, SpriteCopy);
                 }
             }
         }
@@ -68,14 +63,12 @@ public class PlayerTrail : MonoBehaviour
 
     void Update()
     {
-        // 도중에 슬라이드 갯수가 변하면 재생성
         if (SlideNow != SlideEA)
         {
             SlideNow = SlideEA;
             DefaultSet();
         }
 
-        //Awake 단계에서 에러가 났다면 작동금지
         if (ErrorDebug && SlideNow > 0)
             return;
 
@@ -90,15 +83,14 @@ public class PlayerTrail : MonoBehaviour
             {
                 if (SilhouetteList.Count > 0)
                 {
-                    SilhouetteList[Limit].transform.position = transform.position; // 실루엣을 실루엣의 주인에게 이동하되,
-                    SilhouetteList[Limit].transform.position += new Vector3(0, 0, 1); // 한 레이어 뒤에서.
-                    SilhouetteList[Limit].GetComponent<SpriteRenderer>().sprite = GetComponent<SpriteRenderer>().sprite; // 지금 주인의 스프라이트를 받아서 실루엣에게 적용.
-                    SilhouetteList[Limit].GetComponent<SpriteRenderer>().sortingLayerID = GetComponent<SpriteRenderer>().sortingLayerID; // 지금 주인의 스프라이트를 받아서 실루엣에게 적용.
-                    SilhouetteList[Limit].transform.localScale = transform.localScale; // 좌우반전을 크기로 적용하기 때문에 크기도 받는다.
+                    SilhouetteList[Limit].transform.position = transform.position;
+                    SilhouetteList[Limit].transform.position += new Vector3(0, 0, 1);
+                    SilhouetteList[Limit].GetComponent<SpriteRenderer>().sprite = GetComponent<SpriteRenderer>().sprite;
+                    SilhouetteList[Limit].GetComponent<SpriteRenderer>().sortingLayerID = GetComponent<SpriteRenderer>().sortingLayerID;
+                    SilhouetteList[Limit].transform.localScale = transform.localScale;
 
                     float R = Random.Range(RedMin, RedMax), G = Random.Range(GreenMin, GreenMax), B = Random.Range(BlueMin, BlueMax);
                     SilhouetteList[Limit].GetComponent<SpriteRenderer>().color = new Color(R / 255, G / 255, B / 255, 1);
-                    //무지개빛 총공격
 
                     Limit++;
                     if (Limit > SilhouetteList.Count - 1)
@@ -110,7 +102,6 @@ public class PlayerTrail : MonoBehaviour
 
             for (int i = 0; SilhouetteList.Count > i; i++)
             {
-                //모든 실루엣이 점점 투명해져라.
                 SilhouetteList[i].GetComponent<SpriteRenderer>().color -= new Color(0, 0, 0, 1f / SilhouetteList.Count);
             }
         }
